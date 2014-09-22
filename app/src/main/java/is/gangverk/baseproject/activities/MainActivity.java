@@ -1,5 +1,10 @@
 package is.gangverk.baseproject.activities;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.FragmentManager;
@@ -12,13 +17,25 @@ import is.gangverk.baseproject.fragments.MainFragment;
 import is.gangverk.baseproject.fragments.NavigationDrawerFragment;
 import is.gangverk.baseproject.R;
 
-
 public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
-
     private NavigationDrawerFragment mNavigationDrawerFragment;
     private CharSequence mTitle;
+    private boolean mNoNetwork = false;
+
+    /**
+     * MARK: BroadcastReceiver
+     */
+    private BroadcastReceiver mGlobalBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if(action.equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
+                mNoNetwork = intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false);
+            }
+        }
+    };
 
     /**
      * MARK: Lifecycle Methods
@@ -38,6 +55,18 @@ public class MainActivity extends ActionBarActivity
                 (DrawerLayout) findViewById(R.id.drawer_layout));
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(mGlobalBroadcastReceiver,new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(mGlobalBroadcastReceiver);
+    }
+
     /**
      * MARK: Overrides
      */
@@ -46,7 +75,7 @@ public class MainActivity extends ActionBarActivity
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
-                .replace(R.id.container, MainFragment.newInstance())
+                .replace(R.id.container, MainFragment.newInstance(position))
                 .commit();
     }
 
