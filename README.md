@@ -5,10 +5,10 @@ Baseline Android project with the relevant boilerplate code needed to start quic
 
 
 Libraries
-
-Volley
-Jackson
-Picasso
+====
+-  Volley
+-  Jackson
+-  Picasso
 
 
 TODO
