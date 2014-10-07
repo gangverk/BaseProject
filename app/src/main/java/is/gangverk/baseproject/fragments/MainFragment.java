@@ -37,7 +37,9 @@ public class MainFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getArguments().putInt(BUNDLE_SOME_VAR,savedInstanceState.getInt(BUNDLE_SOME_VAR));
+        if (savedInstanceState != null) {
+            getArguments().putInt(BUNDLE_SOME_VAR, savedInstanceState.getInt(BUNDLE_SOME_VAR));
+        }
     }
 
     //Reference all views owned by this fragment
